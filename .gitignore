@@ -1,0 +1,24 @@
+data/WIDER
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+.venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Environment variables
+.env
+
+# PyTorch Model checkpoints
+*.pth
+
+# System files
+.DS_Store
+Thumbs.db
+
+models/best_model.pth
