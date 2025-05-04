@@ -14,11 +14,23 @@ class WiderFaceNN(nn.Module):
 
         self.pool = nn.MaxPool2d(2, 2)
 
-        self.fc1 = nn.Linear(122880, 1024)
+        self.flatten_dim = None
+        self.fc1 = None
+        # self.fc1 = nn.Linear(122880, 1024)
         self.fc2 = nn.Linear(1024, 256)
         self.fc3 = nn.Linear(256, 500)  # 100 boxes x (4 + 1 confidence)
 
+    def _get_flatten_size(self, x):
+        x = self.pool(self.R(self.conv1(x)))
+        x = self.pool(self.R(self.conv2(x)))
+        x = self.pool(self.R(self.conv3(x)))
+        return x.view(x.size(0), -1).shape[1]
+
     def forward(self, x):
+        if self.flatten_dim is None:
+            self.flatten_dim = self._get_flatten_size(x)
+            self.fc1 = nn.Linear(self.flatten_dim, 1024).to(x.device)
+
         x = self.pool(self.R(self.conv1(x)))
         x = self.pool(self.R(self.conv2(x)))
         x = self.pool(self.R(self.conv3(x)))

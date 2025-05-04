@@ -23,14 +23,14 @@ class WiderFaceDataset(torch.utils.data.Dataset):
                 A.Normalize(mean=[0.485, 0.456, 0.406],
                             std=[0.229, 0.224, 0.225]),
                 ToTensorV2()
-            ], bbox_params=A.BboxParams(format='pascal_voc', label_fields=['labels']))
+            ], bbox_params=A.BboxParams(format='pascal_voc', label_fields=['labels'], min_visibility=0.3))
         else:
             self.transform = A.Compose([
                 A.Resize(512, 512),
                 A.Normalize(mean=[0.485, 0.456, 0.406],
                             std=[0.229, 0.224, 0.225]),
                 ToTensorV2()
-            ], bbox_params=A.BboxParams(format='pascal_voc', label_fields=['labels']))
+            ], bbox_params=A.BboxParams(format='pascal_voc', label_fields=['labels'], min_visibility=0.3))
 
     def __len__(self):
         return len(self.data)

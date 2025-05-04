@@ -59,6 +59,9 @@ Make the raspberry pi the database. Do some object detection which will be the m
 
 
 ACTIVE TODO:
+    - Current plan: 
+        - finish the 'trained' model and test some test images on it to see if it magically worked. 
+        - If it fails, go back and modify the training loop to see what went wrong. 
     - Go over training and validation loop to understand how its working more
     - Add matplot data to visualize training loss. 
     - Build the training pipeline:
@@ -74,7 +77,7 @@ ACTIVE TODO:
     - Frontend to call routes and display detection
     - Research what comes next. Probably building the model, or formatting the data more.
 
-Progress: (total: 24 hrs)
+Progress: (total: 26 hrs)
     4.16.2025   (4hrs)
         - planned out the strucure of the project
         - Created the file structure
@@ -103,8 +106,16 @@ Progress: (total: 24 hrs)
     4.29.2025 (6 hrs)
         - Worked on fixing all the code and debugging what was missed in the parse function
         - Completed the training and validation loop
-            - Lots of bugs, still currently working on that. 
+            - Lots of bugs, still currently working on that.
+
     4.30.2025 (1.5hr)
+
+    5.4.2025 (2 hr)
+        - Working on setting up the test file so I can quickly see if my model actually trained. 
+            - Something is super wrong so its not working very well
+        - Parsed the test file
+        - Going to have to go back to the training loop. 
+
 
 
 

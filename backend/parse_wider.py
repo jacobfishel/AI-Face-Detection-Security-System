@@ -1,7 +1,8 @@
 # File to parse the wider dataset into the proper format to train data
 import json
 import tests.parse_wider_test as test
-from config import TRAIN_ANNOTATIONS_PATH, PARSED_TRAIN_ANNOTATIONS_PATH, TRAIN_IMAGES_FOLDER_PATH, VAL_ANNOTATIONS_PATH, VAL_IMAGES_FOLDER_PATH, PARSED_VAL_ANNOTATIONS_PATH
+import os
+from config import TRAIN_ANNOTATIONS_PATH, PARSED_TRAIN_ANNOTATIONS_PATH, TRAIN_IMAGES_FOLDER_PATH, VAL_ANNOTATIONS_PATH, VAL_IMAGES_FOLDER_PATH, PARSED_VAL_ANNOTATIONS_PATH, TEST_ANNOTATIONS_PATH, TEST_IMAGES_FOLDER_PATH, PARSED_TEST_ANNOTATIONS_PATH
 
 
 # ---------------- CODE -------------- #
@@ -47,10 +48,27 @@ def parse_annotation(images_folder_path, annotations_path, parsed_annotations_pa
   with open(parsed_annotations_path, 'w') as f:
     json.dump(final_data_arr, f, indent=2)
 
+def parse_test_annotations(images_folder_path, annotations_path, parsed_annotations_path):
+
+  final_data_arr = []
+
+  with open(annotations_path, 'r') as f:
+    data = f.readlines()
+
+  for line in data:
+    #data/WIDER/WIDER_test/images/0--Parade/0_Parade_marchingband_1_9.jpg
+    full_path = os.path.join('data/WIDER/WIDER_test/images/', line).strip()
+    final_data_arr.append(full_path)
+  
+  with open(parsed_annotations_path, 'w') as f:
+    json.dump(final_data_arr, f, indent=2)
+
+
 
 if __name__ == '__main__':
-  parse_annotation(TRAIN_IMAGES_FOLDER_PATH, TRAIN_ANNOTATIONS_PATH, PARSED_TRAIN_ANNOTATIONS_PATH)
-  parse_annotation(VAL_IMAGES_FOLDER_PATH, VAL_ANNOTATIONS_PATH, PARSED_VAL_ANNOTATIONS_PATH)
+  # parse_annotation(TRAIN_IMAGES_FOLDER_PATH, TRAIN_ANNOTATIONS_PATH, PARSED_TRAIN_ANNOTATIONS_PATH)
+  # parse_annotation(VAL_IMAGES_FOLDER_PATH, VAL_ANNOTATIONS_PATH, PARSED_VAL_ANNOTATIONS_PATH)
+  parse_test_annotations(TEST_IMAGES_FOLDER_PATH, TEST_ANNOTATIONS_PATH, PARSED_TEST_ANNOTATIONS_PATH)
 
   # TEST FUNCTION LINE TO TEST testing PARSE
   # print(test.test_num_of_images(TRAIN_ANNOTATIONS_PATH, PARSED_TRAIN_ANNOTATIONS_PATH))
