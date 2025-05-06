@@ -46,19 +46,28 @@ Make the raspberry pi the database. Do some object detection which will be the m
         - website + flask
 
 # Notes:
-    google drive + gdown for cloud dataset
-    for venv on another laptop: 
+    - for venv on another laptop: 
         python3 -m venv venv
         source venv/bin/activate
+
+    - install requirements:
         pip install -r requirements.txt
-    pip freeze > requirements.txt
-    python -m backend.train
+
+    - save requirements:
+        pip freeze > requirements.txt
+
+    - Run as a package:
+        python -m backend.train
+
+    - To enter the database:
+        sudo -u postgres psql
 
 
 
 
 
 ACTIVE TODO:
+    - I am in the mood to setup the database, so I'm doing that right now. 
     - Current plan: 
         - finish the 'trained' model and test some test images on it to see if it magically worked. 
         - If it fails, go back and modify the training loop to see what went wrong. 
@@ -115,6 +124,10 @@ Progress: (total: 26 hrs)
             - Something is super wrong so its not working very well
         - Parsed the test file
         - Going to have to go back to the training loop. 
+
+    5.5.2025 (0.5 hr)
+        - Too tired to work on it tn
+        -Researched how I want to do the database and started implementing a little bit. 
 
 
 
