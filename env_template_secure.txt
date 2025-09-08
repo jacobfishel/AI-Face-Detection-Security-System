@@ -1,0 +1,29 @@
+# PostgreSQL Database Configuration
+# Copy this file to .env and fill in your actual values
+
+# Database Settings
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=face_recognition_db
+DB_USER=postgres
+DB_PASSWORD=your_password_here
+
+# API Security Settings
+API_SECRET_KEY=your-super-secret-api-key-change-this-in-production
+JWT_SECRET_KEY=your-jwt-secret-key-change-this-in-production
+ADMIN_API_KEY=admin-super-secret-key-change-this
+USER_API_KEY=user-key-change-this
+API_PORT=5000
+
+# Dataset Paths (existing)
+TRAIN_ANNOTATIONS_PATH=/path/to/train/annotations.txt
+PARSED_TRAIN_ANNOTATIONS_PATH=/path/to/parsed/train/annotations.txt
+TRAIN_IMAGES_FOLDER_PATH=/path/to/train/images/
+
+VAL_ANNOTATIONS_PATH=/path/to/val/annotations.txt
+PARSED_VAL_ANNOTATIONS_PATH=/path/to/parsed/val/annotations.txt
+VAL_IMAGES_FOLDER_PATH=/path/to/val/images/
+
+TEST_ANNOTATIONS_PATH=/path/to/test/annotations.txt
+PARSED_TEST_ANNOTATIONS_PATH=/path/to/parsed/test/annotations.txt
+TEST_IMAGES_FOLDER_PATH=/path/to/test/images/

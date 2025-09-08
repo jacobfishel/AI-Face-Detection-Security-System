@@ -37,7 +37,7 @@ class WiderFaceDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         entry = self.data[idx]
-        img_path = entry["filename"]
+        img_path = os.path.join(self.image_dir, entry["filename"])
         bboxes_raw = entry["bboxes"]
 
         boxes = []
@@ -50,18 +50,35 @@ class WiderFaceDataset(torch.utils.data.Dataset):
         boxes = torch.tensor(boxes, dtype=torch.float32)
 
         if boxes.numel() == 0:
-            print("No valid bboxes, continuing to another image")
-            return self.__getitem__((idx + 1) % len(self))
+            print(f"No valid bboxes for image {idx}, skipping")
+            # Return a dummy sample instead of recursive call to avoid infinite recursion
+            dummy_image = torch.zeros((3, 512, 512))
+            dummy_target = {
+                "boxes": torch.zeros((0, 4), dtype=torch.float32),
+                "labels": torch.zeros((0,), dtype=torch.int64),
+                "image_id": torch.tensor([idx]),
+                "area": torch.zeros((0,), dtype=torch.float32),
+                "iscrowd": torch.zeros((0,), dtype=torch.int64)
+            }
+            return dummy_image, dummy_target
 
         # I had an error where the boxes collapsed to 0 width, so i filter out invalid bboxes
         boxes = boxes[boxes[:, 2] > boxes[:, 0]]    #x_max > x_min
         boxes = boxes[boxes[:, 3] > boxes[:, 1]]    # y_max > y_min
         labels = torch.ones((len(boxes),), dtype=torch.int64)
 
-        #If all boxes got filtered out, return another image
+        #If all boxes got filtered out, return dummy sample
         if boxes.shape[0] == 0:
-            print("No valid bboxes, continuing to another image")
-            return self.__getitem__((idx + 1) % len(self))
+            print(f"All boxes filtered out for image {idx}, returning dummy sample")
+            dummy_image = torch.zeros((3, 512, 512))
+            dummy_target = {
+                "boxes": torch.zeros((0, 4), dtype=torch.float32),
+                "labels": torch.zeros((0,), dtype=torch.int64),
+                "image_id": torch.tensor([idx]),
+                "area": torch.zeros((0,), dtype=torch.float32),
+                "iscrowd": torch.zeros((0,), dtype=torch.int64)
+            }
+            return dummy_image, dummy_target
 
         image = Image.open(img_path).convert("RGB")
         image = np.array(image)

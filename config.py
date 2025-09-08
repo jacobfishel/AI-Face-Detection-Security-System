@@ -17,6 +17,12 @@ TEST_ANNOTATIONS_PATH = os.getenv('TEST_ANNOTATIONS_PATH')
 PARSED_TEST_ANNOTATIONS_PATH = os.getenv('PARSED_TEST_ANNOTATIONS_PATH')
 TEST_IMAGES_FOLDER_PATH = os.getenv('TEST_IMAGES_FOLDER_PATH')
 
+# Database Configuration
+DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_PORT = os.getenv('DB_PORT', '5432')
+DB_NAME = os.getenv('DB_NAME', 'face_recognition_db')
+DB_USER = os.getenv('DB_USER', 'postgres')
+DB_PASSWORD = os.getenv('DB_PASSWORD', '')
 
 BATCH_SIZE = 4
 NUM_EPOCHS = 15

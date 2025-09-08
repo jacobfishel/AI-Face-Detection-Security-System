@@ -30,6 +30,8 @@ class WiderFaceNN(nn.Module):
         if self.flatten_dim is None:
             self.flatten_dim = self._get_flatten_size(x)
             self.fc1 = nn.Linear(self.flatten_dim, 1024).to(x.device)
+            # Register the dynamically created layer as a module
+            self.add_module('fc1', self.fc1)
 
         x = self.pool(self.R(self.conv1(x)))
         x = self.pool(self.R(self.conv2(x)))
