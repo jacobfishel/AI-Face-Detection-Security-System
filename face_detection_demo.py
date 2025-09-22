@@ -9,6 +9,11 @@ import cv2
 import numpy as np
 import os
 from typing import List, Tuple, Optional
+from backend.face_embeddings import (
+    get_embedding,
+    find_best_match,
+    prompt_label_if_unknown,
+)
 
 # Try to import onnxruntime, fall back to OpenCV if not available
 try:
@@ -314,24 +319,70 @@ def main():
                 print("Error: Could not read frame from webcam")
                 break
             
-            # Detect faces
+            # Detect faces: list of (x1, y1, x2, y2, confidence)
             faces = detector.detect_faces(frame)
-            
-            # Draw bounding boxes
-            result_frame = detector.draw_boxes(frame, faces)
-            
+
+            result_frame = frame.copy()
+
+            # Process each detected face: crop → embed → match
+            for (x1, y1, x2, y2, confidence) in faces:
+                x1c = max(0, x1)
+                y1c = max(0, y1)
+                x2c = min(frame.shape[1], x2)
+                y2c = min(frame.shape[0], y2)
+                if x2c <= x1c or y2c <= y1c:
+                    continue
+
+                face_crop = frame[y1c:y2c, x1c:x2c]
+
+                label_text = f"Face: {confidence:.2f}"
+                try:
+                    emb = get_embedding(face_crop)
+                    match = find_best_match(emb, metric="euclidean", threshold=0.6)
+                    if match is not None:
+                        name, score = match
+                        label_text = f"{name} ({score:.2f})"
+                    else:
+                        label_text = "Unknown (press 'a' to add)"
+                except Exception:
+                    # If embedding fails, keep default label
+                    pass
+
+                # Draw bounding box and label
+                cv2.rectangle(result_frame, (x1c, y1c), (x2c, y2c), (0, 255, 0), 2)
+                label_size = cv2.getTextSize(label_text, cv2.FONT_HERSHEY_SIMPLEX, 0.6, 2)[0]
+                cv2.rectangle(result_frame, (x1c, y1c - label_size[1] - 10), 
+                             (x1c + label_size[0], y1c), (0, 255, 0), -1)
+                cv2.putText(result_frame, label_text, (x1c, y1c - 5), 
+                           cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 2)
+
             # Add info text
-            info_text = f"Faces detected: {len(faces)}"
+            info_text = f"Faces detected: {len(faces)}  | q: quit  a: add unknown"
             cv2.putText(result_frame, info_text, (10, 30), 
                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
             
             # Display frame
             cv2.imshow('Face Detection Demo', result_frame)
             
-            # Check for quit
+            # Check for actions
             key = cv2.waitKey(1) & 0xFF
             if key == ord('q'):
                 break
+            if key == ord('a') and len(faces) > 0:
+                # Add the first detected unknown face to the database via prompt
+                x1, y1, x2, y2, _ = faces[0]
+                x1c = max(0, x1)
+                y1c = max(0, y1)
+                x2c = min(frame.shape[1], x2)
+                y2c = min(frame.shape[0], y2)
+                if x2c > x1c and y2c > y1c:
+                    face_crop = frame[y1c:y2c, x1c:x2c]
+                    try:
+                        name, _emb, _ = prompt_label_if_unknown(face_crop)
+                        if name:
+                            print(f"Added new face: {name}")
+                    except Exception as e:
+                        print(f"Failed to add label: {e}")
                 
     except KeyboardInterrupt:
         print("\nInterrupted by user")
