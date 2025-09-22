@@ -86,7 +86,7 @@ class WiderFaceDataset(torch.utils.data.Dataset):
         if self.transform:
             transformed = self.transform(image=image, bboxes=boxes.tolist(), labels=labels.tolist())
             image = transformed["image"]
-            boxes = torch.tensor(transformed["bboxes"], dtype=torch.float32)
+            boxes = torch.tensor(ftransformed["bboxes"], dtype=torch.float32)
             labels = torch.tensor(transformed["labels"], dtype=torch.int64)
 
         target = {

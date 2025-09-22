@@ -53,3 +53,5 @@ flask==3.0.0
 flask-cors==4.0.0
 flask-limiter==3.5.0
 requests==2.31.0
+kagglehub==0.2.7
+onnxruntime==1.19.2

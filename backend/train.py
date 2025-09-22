@@ -3,16 +3,16 @@ import torch.nn.functional as F
 from torchvision.ops import box_iou
 from torch.utils.data import DataLoader, Subset
 import numpy as np
-from data.dataset import WiderFaceDataset, collate_fn
+from data.kaggle_dataset import KaggleWiderFaceDataset, collate_fn
 from backend.model import WiderFaceNN
 from config import IOU_POS_THRESH, BATCH_SIZE, NUM_EPOCHS, LEARNING_RATE, DEVICE
 
 # Initialize model
 model = WiderFaceNN().to(DEVICE)
 
-# Load datasets (testers and real)
-train_dataset = WiderFaceDataset('data/WIDER', 'train')
-val_dataset = WiderFaceDataset('data/WIDER', 'val')
+# Load datasets using KaggleHub
+train_dataset = KaggleWiderFaceDataset('train', download=True)
+val_dataset = KaggleWiderFaceDataset('val', download=True)
 
 train_subset = Subset(train_dataset, list(range(200)))
 val_subset = Subset(val_dataset, list(range(200)))
@@ -139,9 +139,15 @@ def train_model(train_loader, val_loader, model, n_epochs):
 
 
 if __name__ == '__main__':
+    print("Starting WIDERFace training with KaggleHub dataset...")
+    print(f"Device: {DEVICE}")
+    print(f"Batch size: {BATCH_SIZE}")
+    print(f"Number of epochs: {NUM_EPOCHS}")
+    print(f"Learning rate: {LEARNING_RATE}")
+    
+    # Start training with subset first to test everything works
+    print("\nStarting training with subset (200 samples each)...")
+    epochs, losses = train_model(train_subset_loader, val_subset_loader, model, NUM_EPOCHS)
+    
+    # Uncomment the line below to train on full dataset after subset training works
     # epochs, losses = train_model(train_loader, val_loader, model, NUM_EPOCHS)
-    # epochs, losses = train_model(train_subset_loader, val_subset_loader, model, NUM_EPOCHS)
-
-
-    img = val_dataset.__getitem__(20)
-    print(img)
