@@ -1,0 +1,16 @@
+RetinaFace ONNX Model Information
+================================
+
+To use RetinaFace detection, you need to download a pre-trained ONNX model.
+
+Recommended sources:
+1. InsightFace: https://github.com/deepinsight/insightface
+2. PyTorch RetinaFace: https://github.com/biubug6/Pytorch_Retinaface
+3. ONNX Model Zoo: https://github.com/onnx/models
+
+Model requirements:
+- Input size: 640x640
+- Input format: RGB, normalized to [0,1]
+- Output: bounding boxes, confidence scores, landmarks
+
+Place the downloaded .onnx file as 'retinaface.onnx' in this models/ directory.

@@ -15,15 +15,14 @@ ADMIN_API_KEY=admin-super-secret-key-change-this
 USER_API_KEY=user-key-change-this
 API_PORT=5000
 
-# Dataset Paths (existing)
-TRAIN_ANNOTATIONS_PATH=/path/to/train/annotations.txt
-PARSED_TRAIN_ANNOTATIONS_PATH=/path/to/parsed/train/annotations.txt
-TRAIN_IMAGES_FOLDER_PATH=/path/to/train/images/
+# KaggleHub Configuration
+# Optional: Specify custom download path for WIDERFace dataset
+# If not set, dataset will be downloaded to default cache location
+KAGGLE_DOWNLOAD_PATH=/path/to/custom/download/location
 
-VAL_ANNOTATIONS_PATH=/path/to/val/annotations.txt
-PARSED_VAL_ANNOTATIONS_PATH=/path/to/parsed/val/annotations.txt
-VAL_IMAGES_FOLDER_PATH=/path/to/val/images/
-
-TEST_ANNOTATIONS_PATH=/path/to/test/annotations.txt
-PARSED_TEST_ANNOTATIONS_PATH=/path/to/parsed/test/annotations.txt
-TEST_IMAGES_FOLDER_PATH=/path/to/test/images/
+# Kaggle API Configuration
+# Make sure to set up your Kaggle API credentials:
+# 1. Go to https://www.kaggle.com/settings
+# 2. Create API token and download kaggle.json
+# 3. Place kaggle.json in ~/.kaggle/ directory
+# 4. Or set KAGGLE_CONFIG_DIR environment variable to point to kaggle.json location

@@ -301,6 +301,26 @@ class FaceDatabase:
             logger.error(f"Failed to delete face '{name}': {e}")
             return False
     
+    def clear_all_faces(self) -> bool:
+        """
+        Clear all faces from the database.
+        
+        Returns:
+            True if clearing successful, False otherwise
+        """
+        delete_query = "DELETE FROM faces;"
+        
+        try:
+            with self.get_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(delete_query)
+                    conn.commit()
+                    logger.info("All faces cleared from database")
+                    return True
+        except Exception as e:
+            logger.error(f"Failed to clear all faces: {e}")
+            return False
+    
     def close(self) -> None:
         """Close the database connection pool."""
         if self.connection_pool:
