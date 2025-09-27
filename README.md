@@ -1,135 +1,212 @@
-# raspberrypi-server
+# Face Recognition System
 
-Goal:
+A PostgreSQL-based face recognition system with real-time webcam detection and face matching capabilities.
 
-    set up a server on my raspberry pi that will listen for a request to communicate, acknowledge it and sync. 
+## 🚀 Features
 
-    communicate with this program from my other computer to the raspberry pi and have it echo all communication back to the pi. 
+- **Real-time Face Detection**: Uses OpenCV Haar Cascade for face detection
+- **PostgreSQL Database**: Stores face embeddings with proper normalization and similarity matching
+- **Multiple Face Recognition Approaches**:
+  - PyTorch-based embeddings (`face_detection_pytorch_integrated.py`)
+  - Histogram-based features (`face_detection_pretrained.py`)
+- **RetinaFace Support**: Optional RetinaFace model integration
+- **API Server**: RESTful API for face storage and matching
+- **SQLite Fallback**: Alternative SQLite-based face embeddings system
 
+## 📋 Prerequisites
 
-# Current task: 
-    convert all the c code over to python 
-    DONE
+- Python 3.8+
+- PostgreSQL 12+
+- Webcam/Camera
 
-# Idea:
-Make the raspberry pi the database. Do some object detection which will be the main project, but every time I run my camera and detect models, the code pushes these images and info about them to the pi. 
-    # Sends image to the pi
-        # The pi uses SQL commands to insert and SELECT from the database its storing 
-    # Reasoning:
-        I want practice with servers and databases which is why I am connecting to the pi via server and storing data in the database using MySQL
+## 🛠️ Installation
 
+1. **Clone the repository**:
+   ```bash
+   git clone <your-repo-url>
+   cd raspberrypi-server
+   ```
 
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-# Project architecture:
-    [ Main PC (Client) ]
-    |
-    |   (TCP or HTTP requests, or even socket+json)
-    |
-    [ Raspberry Pi (server)]
-        -Runs MySQL
-        -Handles requests to log/query data
+3. **Set up PostgreSQL database**:
+   - Install PostgreSQL
+   - Create database: `face_recognition_db`
+   - See `DATABASE_SETUP.md` for detailed instructions
 
-# Optional add-ons:
-    - Main pc can have a GUI or CLI
-    -Later throw a dashboard on top of the pi
+4. **Configure environment**:
+   ```bash
+   cp env_template_secure.txt .env
+   # Edit .env with your database credentials
+   ```
 
-# CheckList:
-    - Train a model from scratch
-        - Using the wider face dataset
-    - Have the raspberry pi server to send data to
-        - It will then query the data into and from the MySQL database on it.
-    - Create a GUI local app to run the camera
-        - Tkinter or PyQt (runs as a windowed desktop app)
-            - Nice because no need for html/css just python
+## 🎯 Quick Start
 
-    # Maybes:
-        - website + flask
+### Option 1: PyTorch-based Face Recognition
+```bash
+python face_detection_pytorch_integrated.py
+```
 
-# Notes:
-    - for venv on another laptop: 
-        python3 -m venv venv
-        source venv/bin/activate
+### Option 2: Histogram-based Face Recognition
+```bash
+python face_detection_pretrained.py
+```
 
-    - install requirements:
-        pip install -r requirements.txt
+### Controls:
+- `q` - quit
+- `a` - add unknown face to database
+- `s` - show database statistics
+- `t` - test embedding extraction
 
-    - save requirements:
-        pip freeze > requirements.txt
+## 🗄️ Database Schema
 
-    - Run as a package:
-        python -m backend.train
+The system uses PostgreSQL with the following tables:
 
-    - To enter the database:
-        sudo -u postgres psql
+### `faces` table:
+- `id`: Primary key (auto-increment)
+- `name`: Person's name (unique)
+- `face_vector`: Binary storage of normalized face vector
+- `vector_dimension`: Dimension of the face vector
+- `created_at`: Timestamp when record was created
+- `updated_at`: Timestamp when record was last updated
 
+### `face_encodings` table:
+- `id`: Primary key (auto-increment)
+- `face_id`: Foreign key to faces table
+- `encoding_data`: Additional encoding data
+- `encoding_type`: Type of encoding
+- `created_at`: Timestamp when record was created
 
+## 🔧 Configuration
 
+Edit `.env` file with your settings:
 
+```env
+# Database Settings
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=face_recognition_db
+DB_USER=postgres
+DB_PASSWORD=your_password
 
-ACTIVE TODO:
-    - I am in the mood to setup the database, so I'm doing that right now. 
-    - Current plan: 
-        - finish the 'trained' model and test some test images on it to see if it magically worked. 
-        - If it fails, go back and modify the training loop to see what went wrong. 
-    - Go over training and validation loop to understand how its working more
-    - Add matplot data to visualize training loss. 
-    - Build the training pipeline:
-        - write a dataset class 
-        - load annotations
-        - apply transformations
-        - write model
-        - train model
-        - save model
-    - Test model
-    - Loop back if errors
-    - Then flask backent routes to serve the model
-    - Frontend to call routes and display detection
-    - Research what comes next. Probably building the model, or formatting the data more.
+# API Security (optional)
+API_SECRET_KEY=your-secret-key
+JWT_SECRET_KEY=your-jwt-key
+ADMIN_API_KEY=admin-key
+USER_API_KEY=user-key
+API_PORT=5000
+```
 
-Progress: (total: 26 hrs)
-    4.16.2025   (4hrs)
-        - planned out the strucure of the project
-        - Created the file structure
-        - Downloaded the dataset
-        - Got the echo server running 
-            - (will be modified and implemented later. This was mostly for practice)
-    
-    4.17.2025   (3hrs)
-        - Wrote the parse function for the annotation file
-        - Did a lot of research on the way the annotation file should be formatted
-            - tuple containing image file path and 2d array of bbox coords ("", [[]])
+## 📊 API Usage
 
-    4.18.2025   (1hr)
-        - Finished testing the parse file function. It contains the correct numbers of jpg filenames and when I loop through all bounding boxes, they are in the file, so I'm content with this check. 
+Start the API server:
+```bash
+python backend/api_server.py
+```
 
-    4.28.2025 (7hr)
-        - I got a new m.2 and lost a lot of my progress (about 7 hours worth), so this
-            is the time accounted for that. Lost my dataset file and train file but luckily was able to get it back since I was asking chat gpt for help. 
-            
-    4.28.2025 (30 min)
-        - Working on restoring the code still.
-    
-    4.28.2025 (1 hr)
-        - Finished the training and validation loop for the most part
+### Endpoints:
 
-    4.29.2025 (6 hrs)
-        - Worked on fixing all the code and debugging what was missed in the parse function
-        - Completed the training and validation loop
-            - Lots of bugs, still currently working on that.
+- `GET /api/health` - Health check
+- `POST /api/faces` - Store face vector
+- `POST /api/faces/match` - Find matching face
+- `GET /api/faces/<name>` - Get face by name
+- `GET /api/faces` - Get all faces
 
-    4.30.2025 (1.5hr)
+## 🧪 Testing
 
-    5.4.2025 (2 hr)
-        - Working on setting up the test file so I can quickly see if my model actually trained. 
-            - Something is super wrong so its not working very well
-        - Parsed the test file
-        - Going to have to go back to the training loop. 
+Run database tests:
+```bash
+python tests/test_database.py
+```
 
-    5.5.2025 (0.5 hr)
-        - Too tired to work on it tn
-        -Researched how I want to do the database and started implementing a little bit. 
+Run API tests:
+```bash
+python tests/test_api.py
+```
 
+## 📁 Project Structure
 
+```
+├── backend/
+│   ├── database.py          # PostgreSQL database handler
+│   ├── face_embeddings.py   # SQLite fallback embeddings
+│   ├── api_server.py        # Flask API server
+│   └── api_client.py        # API client
+├── models/
+│   ├── detector.py          # RetinaFace detector
+│   └── model_info.txt       # Model information
+├── tests/
+│   ├── test_database.py     # Database tests
+│   └── test_api.py          # API tests
+├── face_detection_pytorch_integrated.py  # Main PyTorch app
+├── face_detection_pretrained.py          # Histogram-based app
+├── retinaface_detector.py   # RetinaFace integration
+├── config.py                # Configuration
+├── requirements.txt         # Dependencies
+└── DATABASE_SETUP.md       # Database setup guide
+```
 
+## 🔍 SQL Queries for pgAdmin
 
+View all faces with embeddings:
+```sql
+SELECT 
+    id,
+    name,
+    vector_dimension,
+    created_at,
+    updated_at,
+    LENGTH(face_vector) as embedding_size_bytes
+FROM faces 
+ORDER BY name;
+```
 
+Get database statistics:
+```sql
+SELECT 
+    COUNT(*) as total_faces,
+    AVG(vector_dimension) as avg_vector_dimension,
+    MIN(created_at) as first_face_added,
+    MAX(created_at) as last_face_added
+FROM faces;
+```
+
+## ⚠️ Troubleshooting
+
+### Common Issues:
+
+1. **PostgreSQL Connection Error**:
+   - Check if PostgreSQL is running
+   - Verify credentials in `.env` file
+   - Ensure database exists
+
+2. **Face Recognition Issues**:
+   - Make sure you have at least 2 people in database
+   - Check lighting conditions
+   - Ensure face is clearly visible
+
+3. **Import Errors**:
+   - Install missing dependencies: `pip install -r requirements.txt`
+   - Check Python path
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🙏 Acknowledgments
+
+- OpenCV for face detection
+- PostgreSQL for database storage
+- PyTorch for neural network embeddings
+- RetinaFace for advanced face detection
