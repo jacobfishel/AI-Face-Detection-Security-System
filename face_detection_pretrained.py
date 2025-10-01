@@ -407,6 +407,7 @@ def main():
                 
                 if x2c > x1c and y2c > y1c:
                     face_crop = frame[y1c:y2c, x1c:x2c]
+                    print(type(face_crop))
                     name, success = face_recognition.prompt_and_store_unknown_face(face_crop)
                     if success:
                         print(f"✅ Successfully added '{name}' to database!")
