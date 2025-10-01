@@ -1,3 +1,10 @@
+#DEMO
+
+
+https://github.com/user-attachments/assets/184c8d95-6e2f-4a27-a3a1-bff5649f0ff7
+
+
+
 # Face Recognition System
 
 A PostgreSQL-based face recognition system with real-time webcam detection and face matching capabilities.
@@ -24,7 +31,6 @@ A PostgreSQL-based face recognition system with real-time webcam detection and f
 1. **Clone the repository**:
    ```bash
    git clone <your-repo-url>
-   cd raspberrypi-server
    ```
 
 2. **Install dependencies**:
